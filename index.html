@@ -27,7 +27,7 @@
             flex-direction: column;
         }
         .embed iframe {
-            border: 1px solid #ccc;
+            border: 1.5px solid #ccc;
             border-radius: 5px;
             width: 400px;
             height: 400px;
@@ -40,22 +40,34 @@
             display: none;
         }
         .button-container {
-            margin-top: 15px;
+            margin-top: 5px;
             display: flex;
-            gap: 10px;
+            gap: 5px;
             justify-content: center;
             align-items: center;
         }
         button {
-            background-color:#7B7B7B;
+            background-color:#1C58B8;
             color: white;
             border: none;
             padding: 10px 15px;
-            border-radius: 4px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button#secondary-button {
+            background-color:white;
+            color: #333;
+            border: 1.5px solid #ccc;
+            padding: 10px 15px;
+            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color:#1C58B8;
+            background-color:#ccc;
+        }
+        button#secondary-button:hover {
+            background-color: #ccc;
+            color: white;
         }
         .loading {
             text-align: center;
@@ -111,6 +123,12 @@
             // iframe.height = '400';
             iframe.frameBorder = '0';
             
+            const publishDate = document.createElement('p');
+            publishDate.textContent = `Last updated: ${data.date }`;
+            publishDate.style.color = '#666';
+            publishDate.style.fontSize = '14px';
+           
+
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
             
@@ -179,6 +197,7 @@
             const jsCode = `<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();<\/script>`;
                         
             const copyJSButton = document.createElement('button');
+            copyJSButton.id = 'secondary-button';
             copyJSButton.textContent = 'Copy JS Code';
             copyJSButton.addEventListener('click', () => {
                 if (data.embed) {
@@ -199,8 +218,10 @@
             buttonContainer.appendChild(downloadImageButton);
             buttonContainer.appendChild(copyJSButton);
             
+            
             embedDiv.appendChild(title);
             embedDiv.appendChild(iframe);
+            embedDiv.appendChild(publishDate);
             embedDiv.appendChild(buttonContainer);
             
             return embedDiv;
@@ -216,6 +237,7 @@
                 // Map the data to our expected format
                 const mappedData = data.map(d => ({
                     slug: d['Slug'],
+                    date: d['Date'],
                     preview: d['Preview'],
                     embed: d['Code'],
                     image: d['Image'],
@@ -270,7 +292,7 @@
             searchInput.placeholder = 'Search chart...';
             searchInput.style.padding = '10px';
             searchInput.style.width = '300px';
-            searchInput.style.border = '1px solid #ccc';
+            searchInput.style.border = '1.5px solid #ccc';
             searchInput.style.borderRadius = '4px';
 
             searchInput.addEventListener('input', () => {

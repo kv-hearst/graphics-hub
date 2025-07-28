@@ -176,9 +176,28 @@
                 }
             });
 
+            const jsCode = `<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();<\/script>`;
+                        
+            const copyJSButton = document.createElement('button');
+            copyJSButton.textContent = 'Copy JS Code';
+            copyJSButton.addEventListener('click', () => {
+                if (data.embed) {
+                    try {
+                        navigator.clipboard.writeText(jsCode);
+                        alert('JS code copied to clipboard!');
+                    } catch (error) {
+                        console.error('Failed to copy JS code: ', error);
+                        alert('Failed to copy JS code. Please try again.');
+                    }
+                } else {
+                    alert('No JS code available for this item.');
+                }
+            });
+
             // Assemble the embed div
             buttonContainer.appendChild(copyEmbedButton);
             buttonContainer.appendChild(downloadImageButton);
+            buttonContainer.appendChild(copyJSButton);
             
             embedDiv.appendChild(title);
             embedDiv.appendChild(iframe);

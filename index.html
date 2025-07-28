@@ -66,8 +66,7 @@
             font-family: 'Effra', sans-serif;
             margin: 20px;
             padding-left: 20%;
-            padding-right: 20%;
-            /* background-color: whitesmoke; */
+            padding-right: 20%; 
         }
         .embed-container {
             display: grid;
@@ -152,7 +151,7 @@
 </head>
 <body>
     <h1>Hearst Television Data Team</h1>
-    <p id="subhed">Welcome to the graphics hub where you can search charts, copy iframe codes, or download charts.</p>
+    <p id="subhed">Welcome to the graphics hub where you can search charts, copy iframe codes and download images.</p>
 
     <div id="loading" class="loading">Loading embeds...</div>
     <div id="search-container" class="search-container"></div>
@@ -215,6 +214,7 @@
             });
             
             const downloadImageButton = document.createElement('button');
+            downloadImageButton.id = 'secondary-button';
             downloadImageButton.textContent = 'Download Image';
             downloadImageButton.addEventListener('click', () => {
 
@@ -253,7 +253,6 @@
             const jsCode = `<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();<\/script>`;
                         
             const copyJSButton = document.createElement('button');
-            copyJSButton.id = 'secondary-button';
             copyJSButton.textContent = 'Copy JS Code';
             copyJSButton.addEventListener('click', () => {
                 if (data.embed) {
@@ -271,8 +270,9 @@
 
             // Assemble the embed div
             buttonContainer.appendChild(copyEmbedButton);
-            buttonContainer.appendChild(downloadImageButton);
             buttonContainer.appendChild(copyJSButton);
+            buttonContainer.appendChild(downloadImageButton);
+            
             
             
             embedDiv.appendChild(title);

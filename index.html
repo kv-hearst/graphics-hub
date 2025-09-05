@@ -98,8 +98,6 @@
             margin-top: 5px;
             display: flex;
             gap: 5px;
-            /* justify-content: center; */
-            /* align-items: center; */
         }
         button {
             background-color:#1C58B8;
@@ -132,11 +130,21 @@
             text-align: center;
             color: #333;
         }
+
         #subhed {
             text-align: center;
             color: #555;
 
         }
+        img#logo {
+            width: 300px;
+            height: auto;
+            display: block;
+            margin: 0 auto; 
+            align-items: center;
+            justify-content: center;
+        }
+        
 
         @media (max-width: 768px) {
             .embed-container {
@@ -150,13 +158,15 @@
     </style>
 </head>
 <body>
-    <h1>Hearst Television Data Team</h1>
-    <p id="subhed">Welcome to the graphics hub where you can search charts, copy iframe codes and download images.</p>
+    <!-- <h1>Hearst Television Data Team</h1> -->
+    <img id="logo" src="logo.png" >
+    <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub where you can search charts, copy iframe codes and download images.</p>
 
     <div id="loading" class="loading">Loading embeds...</div>
     <div id="search-container" class="search-container"></div>
     <div id="embed-container" class="embed-container" style="display: none;">
     </div>
+
 
 
     <script>

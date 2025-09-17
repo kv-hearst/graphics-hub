@@ -64,8 +64,7 @@
     <style>
         body {
             font-family: 'Effra', sans-serif;
-        }
-        .main-container {
+            margin: 20px;
             padding-left: 20%;
             padding-right: 20%; 
         }
@@ -135,20 +134,8 @@
         #subhed {
             text-align: center;
             color: #555;
+
         }
-        
-        .search-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .search-container input {
-            padding: 10px;
-            width: 300px;
-            border: 1.5px solid #ccc;
-            border-radius: 4px;
-        }
-        
         img#logo {
             width: 300px;
             height: auto;
@@ -157,43 +144,7 @@
             align-items: center;
             justify-content: center;
         }
-
-        .footnote {
-            height: 100px;
-            margin-bottom: 0px;
-            background-color: lightgray;
-            width: 100%;
-        }
         
-        .page-container {
-            justify-content: center;
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            padding: 20px;
-            align-items: center;
-        }
-        
-        .page-container button {
-            background-color:#1C58B8;
-            color: white;
-            border: 1px solid #ccc;
-        }
-        
-        .page-container button:hover {
-            background-color: #e9ecef;
-        }
-        
-        button:disabled {
-            background-color: #eee !important;
-            color: #999 !important;
-            cursor: not-allowed;
-        }
-        
-        #current-page {
-            padding: 0 15px;
-            
-        }
 
         @media (max-width: 768px) {
             .embed-container {
@@ -214,50 +165,41 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <img id="logo" src="logo.png" alt="Logo">
-        <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub where you can search charts, copy iframe codes and download images.</p>
+    <img id="logo" src="logo.png" >
+    <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub where you can search charts, copy iframe codes and download images.</p>
+
+    <div id="loading" class="loading">Loading embeds...</div>
+    <div id="search-container" class="search-container"></div>
+    <div id="embed-container" class="embed-container" style="display: none;">
     </div>
 
-    <div class="main-container">
-        <div id="loading" class="loading">Loading embeds...</div>
-        <div id="search-container" class="search-container"></div>
-        <div id="embed-container" class="embed-container" style="display: none;"></div>
-    </div>
 
-    <div class="footnote">
-        <div id="page-container" class="page-container">
-            <button id="previous">Previous</button>
-            <div id="current-page"></div>
-            <button id="next">Next</button>
-        </div>
-    </div>
 
     <script>
         const sheetURL = 'https://docs.google.com/spreadsheets/d/1dA_wDlLHOwj_mZm-GNt88ZzJkR9FJgatA_0sRBk4A0c/export?format=csv&gid=0';
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxe1AWdpnKMKTgj_-8eI-6lpYRfehlB9jyaS7hf4ZDzgBTNhUaIa8kfHHnYo54m_O-6EA/exec';
 
-        // Global variables
-        let allEmbeds = [];
-        let filteredEmbeds = [];
-        let currentPage = 1;
-        const itemsPerPage = 21;
-
+        
         function createEmbedElement(data, index) {
+            // Create the main embed div
             const embedDiv = document.createElement('div');
             embedDiv.className = 'embed';
             
+            // Create and populate the elements
             const title = document.createElement('h3');
             title.textContent = data.slug || 'No Slug';
             
             const iframe = document.createElement('iframe');
             iframe.src = data.preview || '';
+            // iframe.width = '400';
+            // iframe.height = '400';
             iframe.frameBorder = '0';
             
             const publishDate = document.createElement('p');
-            publishDate.textContent = `Last updated: ${data.date}`;
+            publishDate.textContent = `Last updated: ${data.date }`;
             publishDate.style.color = '#666';
             publishDate.style.fontSize = '14px';
+           
 
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
@@ -292,6 +234,7 @@
             downloadImageButton.id = 'secondary-button';
             downloadImageButton.textContent = 'Download Image';
             downloadImageButton.addEventListener('click', () => {
+
                 fetch(scriptURL, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -342,9 +285,12 @@
                 }
             });
 
+            // Assemble the embed div
             buttonContainer.appendChild(copyEmbedButton);
             buttonContainer.appendChild(copyJSButton);
             buttonContainer.appendChild(downloadImageButton);
+            
+            
             
             embedDiv.appendChild(title);
             embedDiv.appendChild(iframe);
@@ -352,59 +298,6 @@
             embedDiv.appendChild(buttonContainer);
             
             return embedDiv;
-        }
-
-        function displayPage(page) {
-            const container = document.getElementById('embed-container');
-            const pageContainer = document.getElementById('page-container');
-            const previousButton = document.getElementById('previous');
-            const nextButton = document.getElementById('next');
-            const currentPageDisplay = document.getElementById('current-page');
-            
-            container.innerHTML = '';
-            
-            const totalPages = Math.ceil(filteredEmbeds.length / itemsPerPage);
-            
-            if (totalPages <= 1) {
-                pageContainer.style.display = 'none';
-            } else {
-                pageContainer.style.display = 'flex';
-            }
-            
-            if (page < 1) page = 1;
-            if (page > totalPages) page = totalPages;
-            currentPage = page;
-            
-            const startIndex = (page - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageItems = filteredEmbeds.slice(startIndex, endIndex);
-            
-            pageItems.forEach((data, index) => {
-                const embedElement = createEmbedElement(data, startIndex + index);
-                container.appendChild(embedElement);
-            });
-            
-            previousButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === totalPages || totalPages === 0;
-            currentPageDisplay.textContent = `Page ${currentPage} of ${totalPages}`;
-        }
-
-        function setupPagination() {
-            const previousButton = document.getElementById('previous');
-            const nextButton = document.getElementById('next');
-            
-            previousButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    displayPage(currentPage - 1);
-                }
-            });
-
-            nextButton.addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredEmbeds.length / itemsPerPage);
-                if (currentPage < totalPages) {
-                    displayPage(currentPage + 1);
-                }
-            });
         }
         
         function loadEmbeds() {
@@ -414,6 +307,7 @@
             d3.csv(sheetURL).then(data => {
                 console.log('Raw data:', data);
                 
+                // Map the data to our expected format
                 const mappedData = data.map(d => ({
                     slug: d['Slug'],
                     date: d['Date'],
@@ -426,50 +320,75 @@
                 
                 console.log('Mapped Data:', mappedData);
                 
-                allEmbeds = mappedData.reverse();
-                filteredEmbeds = [...allEmbeds];
+                // Clear existing content
+                container.innerHTML = '';
+
+                mappedData.reverse().forEach((rowData, index) => {
+                    const embedElement = createEmbedElement(rowData, index);
+                    container.appendChild(embedElement);
+                });
                 
+                // Hide loading and show container
                 loadingDiv.style.display = 'none';
                 container.style.display = 'grid';
-                
-                displayPage(1);
                 
             }).catch(error => {
                 console.error('Error loading data:', error);
                 loadingDiv.textContent = 'Error loading embeds. Please check the console for details.';
             });
         }
+        
+        // Load embeds when page loads
+        loadEmbeds();
 
+        // Function to refresh embeds
+        function refreshEmbeds() {
+            const loadingDiv = document.getElementById('loading');
+            const container = document.getElementById('embed-container');
+            loadingDiv.style.display = 'block';
+            container.style.display = 'none';
+            loadEmbeds();
+        }
+ 
+        // Optional: Auto-refresh every 5 minutes (300000 ms)
+        setInterval(refreshEmbeds, 300000);
+    </script>
+
+    <script>
         function createSearchBar() {
             const searchContainer = document.getElementById('search-container');
-            
+            searchContainer.style.textAlign = 'center';
+            searchContainer.style.marginBottom = '20px';
+
             const searchInput = document.createElement('input');
             searchInput.type = 'text';
             searchInput.placeholder = 'Search chart...';
-            
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                
-                if (query === '') {
-                    filteredEmbeds = [...allEmbeds];
-                } else {
-                    filteredEmbeds = allEmbeds.filter(item => 
-                        item.slug && item.slug.toLowerCase().includes(query)
-                    );
-                }
-                
-                currentPage = 1;
-                displayPage(currentPage);
+            searchInput.style.padding = '10px';
+            searchInput.style.width = '300px';
+            searchInput.style.border = '1.5px solid #ccc';
+            searchInput.style.borderRadius = '4px';
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                const embeds = document.querySelectorAll('.embed');
+                embeds.forEach(embed => {
+                    const title = embed.querySelector('h3').textContent.toLowerCase();
+                    if (title.includes(query)) {
+                        embed.style.display = 'block';
+                    } else {
+                        embed.style.display = 'none';
+                    }
+                });
             });
 
             searchContainer.appendChild(searchInput);
+            document.body.insertBefore(searchContainer, document.getElementById('embed-container'));
         }
+    
 
-        document.addEventListener('DOMContentLoaded', () => {
-            createSearchBar();
-            setupPagination();
-            loadEmbeds();
-        });
+        // Create the search bar when the page loads
+        createSearchBar();
     </script>
+
 </body>
 </html>

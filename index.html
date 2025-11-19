@@ -65,6 +65,9 @@
         body {
             font-family: 'Effra', sans-serif;
         }
+        .header {
+           text-align: left;
+        }
         .main-container {
             padding-left: 20%;
             padding-right: 20%; 
@@ -135,6 +138,7 @@
         #subhed {
             text-align: center;
             color: #555;
+            font-size: 16px;
         }
         
         .search-container {
@@ -159,7 +163,7 @@
         }
 
         .footnote {
-            height: 100px;
+            height: 200px;
             margin-bottom: 0px;
             background-color: lightgray;
             width: 100%;
@@ -206,10 +210,33 @@
             img#logo {
                 width: 150px;
             }
-            body {
-                padding-left: 10%;
-                padding-right: 10%;
+            
+            .button-container {
+            flex-direction: column;
+            
             }
+            .header {
+                padding-left: 10%;
+                padding-right: 10%; 
+            }
+            .main-container {
+                padding-left: 10%;
+                padding-right: 10%; 
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            #subhed {
+                font-size: 12px;
+                text-align: left;   
+            }
+            .search-container input {
+            width: 200px;
+            padding: 0px;
+
+           
+        }
+        
         }
     </style>
 </head>
@@ -217,11 +244,13 @@
     <div class="header">
         <img id="logo" src="logo.png" alt="Logo">
         <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub where you can search charts, copy iframe codes and download images.</p>
+        <div id="loading" class="loading">Loading embeds...</div>
+        <div id="search-container" class="search-container"></div>
     </div>
 
     <div class="main-container">
-        <div id="loading" class="loading">Loading embeds...</div>
-        <div id="search-container" class="search-container"></div>
+        <!-- <div id="loading" class="loading">Loading embeds...</div>
+        <div id="search-container" class="search-container"></div> -->
         <div id="embed-container" class="embed-container" style="display: none;"></div>
     </div>
 
@@ -412,33 +441,38 @@
             const container = document.getElementById('embed-container');
             
             d3.csv(sheetURL).then(data => {
-                console.log('Raw data:', data);
-                
-                const mappedData = data.map(d => ({
-                    slug: d['Slug'],
-                    date: d['Date'],
-                    preview: d['Preview'],
-                    embed: d['Code'],
-                    image: d['Image'],
-                    iframeDownloads: d['Iframe Downloads'],
-                    imageDownloads: d['Image Downloads']
-                }));
-                
-                console.log('Mapped Data:', mappedData);
-                
-                allEmbeds = mappedData.reverse();
-                filteredEmbeds = [...allEmbeds];
-                
-                loadingDiv.style.display = 'none';
-                container.style.display = 'grid';
-                
-                displayPage(1);
-                
+            console.log('Raw data:', data);
+            
+            const mappedData = data.map(d => ({
+                slug: d['Slug'],
+                date: d['Date'],
+                preview: d['Preview'],
+                embed: d['Code'],
+                image: d['Image'],
+                iframeDownloads: d['Iframe Downloads'],
+                imageDownloads: d['Image Downloads']
+            }));
+            
+            console.log('Mapped Data:', mappedData);
+            
+            allEmbeds = mappedData.reverse();
+            filteredEmbeds = [...allEmbeds];
+            
+            loadingDiv.style.display = 'none';
+            container.style.display = 'grid';
+            
+            displayPage(1);
+            
             }).catch(error => {
-                console.error('Error loading data:', error);
-                loadingDiv.textContent = 'Error loading embeds. Please check the console for details.';
+            console.error('Error loading data:', error);
+            loadingDiv.textContent = 'Error loading embeds. Please check the console for details.';
             });
         }
+
+        // Refresh embeds every 30 seconds
+        setInterval(() => {
+            loadEmbeds();
+        }, 30000);
 
         function createSearchBar() {
             const searchContainer = document.getElementById('search-container');

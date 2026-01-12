@@ -249,8 +249,6 @@
     </div>
 
     <div class="main-container">
-        <!-- <div id="loading" class="loading">Loading embeds...</div>
-        <div id="search-container" class="search-container"></div> -->
         <div id="embed-container" class="embed-container" style="display: none;"></div>
     </div>
 
@@ -461,7 +459,7 @@
             loadingDiv.style.display = 'none';
             container.style.display = 'grid';
             
-            displayPage(1);
+            displayPage(currentPage);
             
             }).catch(error => {
             console.error('Error loading data:', error);

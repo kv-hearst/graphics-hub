@@ -353,9 +353,20 @@
             });
 
             const jsCode = `<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();<\/script>`;
+
+            // const isDatawrapper = sheetURL && sheetURL.includes("https://datawrapper");
+
+            const isDatawrapper = data.preview && data.preview.includes("datawrapper");
                         
             const copyJSButton = document.createElement('button');
             copyJSButton.textContent = 'Copy JS Code';
+
+            copyJSButton.disabled = !isDatawrapper;
+            copyJSButton.style.opacity = isDatawrapper ? '1' : '0.5';
+            copyJSButton.style.cursor = isDatawrapper ? 'pointer' : 'not-allowed';
+
+
+
             copyJSButton.addEventListener('click', () => {
                 if (data.embed) {
                     try {
@@ -468,7 +479,7 @@
             });
         }
 
-        // Refresh embeds every 30 seconds
+        // Refresh embeds every 5 minutes
         setInterval(() => {
             loadEmbeds();
         }, 300000);

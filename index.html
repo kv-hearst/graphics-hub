@@ -243,7 +243,9 @@
 <body>
     <div class="header">
         <img id="logo" src="logo.png" alt="Logo">
-        <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub where you can search charts, copy iframe codes and download images.</p>
+        <p id="subhed">Welcome to the Get the Facts Data Team's graphics hub, where you can search charts, get links to on-air features and copy embed code. Note that some charts and interactives require JavaScript placed at the bottom of your MediaOS script. Those items include a blue button you can click to copy the JavaScript code and the embed code.
+
+        </p>
         <div id="loading" class="loading">Loading embeds...</div>
         <div id="search-container" class="search-container"></div>
     </div>
@@ -316,45 +318,74 @@
                 }
             });
             
-            const downloadImageButton = document.createElement('button');
-            downloadImageButton.id = 'secondary-button';
-            downloadImageButton.textContent = 'On-Air Feature';
-            downloadImageButton.addEventListener('click', () => {
+            // const downloadImageButton = document.createElement('button');
+            // downloadImageButton.id = 'secondary-button';
+            // downloadImageButton.textContent = 'On-Air Feature';
+            // downloadImageButton.addEventListener('click', () => {
+            //     fetch(scriptURL, {
+            //         method: 'POST',
+            //         body: JSON.stringify({
+            //             downloadType: 'image',
+            //             identifier: data.slug
+            //         })
+            //     }).catch(error => {
+            //         console.error('Error tracking image download:', error);
+            //     });
+
+            //     if (data.image) {
+            //         try {
+            //             let downloadUrl = data.image;
+            //             const fileIdMatch = data.image.match(/\/d\/([a-zA-Z0-9-_]+)\//);
+            //             if (fileIdMatch) {
+            //                 const fileId = fileIdMatch[1];
+            //                 downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            //             } 
+            //             const link = document.createElement('a');
+            //             link.href = downloadUrl;
+            //             link.download = '';
+            //             document.body.appendChild(link);
+            //             link.click();
+            //             document.body.removeChild(link);
+            //         } catch (error) {
+            //             console.error('Download tracking failed:', error);
+            //         }
+            //     } else {
+            //         alert('No image available for this item.');
+            //     }
+            // });
+
+
+            const featureButton = document.createElement('button');
+            featureButton.id = 'secondary-button';
+            featureButton.textContent = 'On-Air Feature';
+            featureButton.addEventListener('click', () => {
                 fetch(scriptURL, {
                     method: 'POST',
                     body: JSON.stringify({
-                        downloadType: 'image',
+                        downloadType: 'onAirFeature',
                         identifier: data.slug
                     })
                 }).catch(error => {
                     console.error('Error tracking image download:', error);
                 });
 
-                if (data.image) {
+                if (data.onAirFeatures) {
                     try {
-                        let downloadUrl = data.image;
-                        const fileIdMatch = data.image.match(/\/d\/([a-zA-Z0-9-_]+)\//);
-                        if (fileIdMatch) {
-                            const fileId = fileIdMatch[1];
-                            downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-                        } 
-                        const link = document.createElement('a');
-                        link.href = downloadUrl;
-                        link.download = '';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        navigator.clipboard.writeText(data.onAirFeatures);
+                        alert('Feature link copied to clipboard!');
                     } catch (error) {
-                        console.error('Download tracking failed:', error);
+                        console.error('Failed to copy feature link: ', error);
+                        alert('Failed to copy feature link. Please try again.');
                     }
                 } else {
-                    alert('No image available for this item.');
+                    alert('No feature link available for this item.');
                 }
+            
             });
 
+    
             const jsCode = `<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();<\/script>`;
 
-            // const isDatawrapper = sheetURL && sheetURL.includes("https://datawrapper");
 
             const isDatawrapper = data.preview && data.preview.includes("datawrapper");
                         
@@ -381,9 +412,11 @@
                 }
             });
 
+       
+            buttonContainer.appendChild(featureButton);
             buttonContainer.appendChild(copyEmbedButton);
             buttonContainer.appendChild(copyJSButton);
-            buttonContainer.appendChild(downloadImageButton);
+            
             
             embedDiv.appendChild(title);
             embedDiv.appendChild(iframe);
@@ -452,6 +485,8 @@
             
             d3.csv(sheetURL).then(data => {
             console.log('Raw data:', data);
+
+
             
             const mappedData = data.map(d => ({
                 slug: d['Slug'],
@@ -460,7 +495,8 @@
                 embed: d['Code'],
                 image: d['Image'],
                 iframeDownloads: d['Iframe Downloads'],
-                imageDownloads: d['Image Downloads']
+                imageDownloads: d['Image Downloads'],
+                onAirFeatures: d['Link to feature on-air']
             }));
             
             console.log('Mapped Data:', mappedData);

@@ -373,16 +373,21 @@
                 });
 
                 if (data.onAirFeatures) {
-                    try {
-                        navigator.clipboard.writeText(data.onAirFeatures);
-                        alert('Feature link copied to clipboard!');
-                    } catch (error) {
-                        console.error('Failed to copy feature link: ', error);
-                        alert('Failed to copy feature link. Please try again.');
+                    window.open(data.onAirFeatures, '_blank');
+                    } else {
+                        alert('No feature link available for this item.');
                     }
-                } else {
-                    alert('No feature link available for this item.');
-                }
+
+                //     try {
+                //         navigator.clipboard.writeText(data.onAirFeatures);
+                //         alert('Feature link copied to clipboard!');
+                //     } catch (error) {
+                //         console.error('Failed to copy feature link: ', error);
+                //         alert('Failed to copy feature link. Please try again.');
+                //     }
+                // } else {
+                //     alert('No feature link available for this item.');
+                // }
             
             });
 
